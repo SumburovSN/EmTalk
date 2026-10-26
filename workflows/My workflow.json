@@ -1,0 +1,265 @@
+{
+  "name": "My workflow",
+  "nodes": [
+    {
+      "parameters": {},
+      "type": "n8n-nodes-base.manualTrigger",
+      "typeVersion": 1,
+      "position": [
+        -1056,
+        -288
+      ],
+      "id": "df3a3b4a-a335-48f2-80b3-8bd9d3becf1c",
+      "name": "When clicking ‘Execute workflow’"
+    },
+    {
+      "parameters": {
+        "assignments": {
+          "assignments": [
+            {
+              "id": "0cce934c-596d-46c1-8ddc-7cf087ba3f91",
+              "name": "app",
+              "value": "EmTalk",
+              "type": "string"
+            },
+            {
+              "id": "93fff0e3-6c7d-4f7b-ab3f-2310797aecde",
+              "name": "language",
+              "value": "ru",
+              "type": "string"
+            },
+            {
+              "id": "7493addf-69e8-4433-9a23-dbdc42caa753",
+              "name": "message",
+              "value": "Привет! Я EmTalk. Чем я могу помочь тебе сегодня?",
+              "type": "string"
+            }
+          ]
+        },
+        "options": {}
+      },
+      "type": "n8n-nodes-base.set",
+      "typeVersion": 3.5,
+      "position": [
+        -848,
+        -288
+      ],
+      "id": "0e12d0e4-a203-4a78-ba62-32cbac0c0681",
+      "name": "Edit Fields"
+    },
+    {
+      "parameters": {
+        "assignments": {
+          "assignments": [
+            {
+              "id": "39f2f527-623f-49dc-8cd2-3219d5ab66a8",
+              "name": "reply",
+              "value": "Я рядом. Давай разберёмся спокойно и выберем небольшой следующий шаг.",
+              "type": "string"
+            }
+          ]
+        },
+        "includeOtherFields": true,
+        "options": {}
+      },
+      "type": "n8n-nodes-base.set",
+      "typeVersion": 3.5,
+      "position": [
+        -624,
+        -288
+      ],
+      "id": "9c677e7e-529b-48c1-8f4a-5fe9190a99c7",
+      "name": "Edit Fields1"
+    },
+    {
+      "parameters": {
+        "assignments": {
+          "assignments": [
+            {
+              "id": "d4a1261a-5db3-4118-b3e2-1715bea03fa1",
+              "name": "user_message",
+              "value": "Я не знаю, с чего начать работу.",
+              "type": "string"
+            }
+          ]
+        },
+        "includeOtherFields": true,
+        "options": {}
+      },
+      "type": "n8n-nodes-base.set",
+      "typeVersion": 3.5,
+      "position": [
+        -400,
+        -288
+      ],
+      "id": "4cff2fad-7f57-42dd-bc6c-eec2e7a69c02",
+      "name": "User Input"
+    },
+    {
+      "parameters": {
+        "method": "POST",
+        "url": "http://host.docker.internal:11434/api/chat",
+        "sendBody": true,
+        "specifyBody": "json",
+        "jsonBody": "={{\n  {\n    model: \"qwen2.5:3b\",\n    stream: false,\n    messages: [\n      {\n        role: \"system\",\n        content: \"Ты — EmTalk, доброжелательный помощник по рабочим затруднениям. Отвечай по-русски, кратко и естественно. Если человек не знает, с чего начать работу, помоги выбрать один конкретный первый шаг. Не перегружай советами.\"\n      },\n      {\n        role: \"user\",\n        content: $json.body.message\n      }\n    ]\n  }\n}}",
+        "options": {}
+      },
+      "type": "n8n-nodes-base.httpRequest",
+      "typeVersion": 4.5,
+      "position": [
+        -176,
+        -288
+      ],
+      "id": "0cc0cf12-3eab-4fdf-871b-839d80ce8e53",
+      "name": "HTTP Request"
+    },
+    {
+      "parameters": {
+        "assignments": {
+          "assignments": [
+            {
+              "id": "bcf76846-8807-46ae-a818-7c764e34e577",
+              "name": "reply",
+              "value": "={{ $json.message.content }}",
+              "type": "string"
+            }
+          ]
+        },
+        "includeOtherFields": true,
+        "options": {}
+      },
+      "type": "n8n-nodes-base.set",
+      "typeVersion": 3.5,
+      "position": [
+        48,
+        -288
+      ],
+      "id": "fb19071c-9662-4d29-ad0e-3ac7c5caa081",
+      "name": "Edit Fields2"
+    },
+    {
+      "parameters": {
+        "httpMethod": "POST",
+        "path": "emtalk",
+        "responseMode": "responseNode",
+        "options": {}
+      },
+      "type": "n8n-nodes-base.webhook",
+      "typeVersion": 2.2,
+      "position": [
+        -16,
+        -16
+      ],
+      "id": "96b38871-5f45-41b3-bcf3-781b123e0f75",
+      "name": "Webhook",
+      "webhookId": "451f186e-12a5-44ff-a6a3-9babebc64f4d"
+    },
+    {
+      "parameters": {
+        "respondWith": "json",
+        "responseBody": "={{ { \"reply\": $json.reply } }}",
+        "options": {}
+      },
+      "type": "n8n-nodes-base.respondToWebhook",
+      "typeVersion": 1.5,
+      "position": [
+        240,
+        -288
+      ],
+      "id": "f14e6da9-01bf-4fb3-8536-3c0be869da1e",
+      "name": "Respond to Webhook"
+    }
+  ],
+  "pinData": {},
+  "connections": {
+    "When clicking ‘Execute workflow’": {
+      "main": [
+        [
+          {
+            "node": "Edit Fields",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Edit Fields": {
+      "main": [
+        [
+          {
+            "node": "Edit Fields1",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Edit Fields1": {
+      "main": [
+        [
+          {
+            "node": "User Input",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "User Input": {
+      "main": [
+        [
+          {
+            "node": "HTTP Request",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "HTTP Request": {
+      "main": [
+        [
+          {
+            "node": "Edit Fields2",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Webhook": {
+      "main": [
+        [
+          {
+            "node": "HTTP Request",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Edit Fields2": {
+      "main": [
+        [
+          {
+            "node": "Respond to Webhook",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    }
+  },
+  "active": false,
+  "settings": {
+    "executionOrder": "v1",
+    "binaryMode": "separate"
+  },
+  "versionId": "c0235753-3e8b-40cb-9fb6-70a5afddb618",
+  "meta": {
+    "instanceId": "a256e5983c2258d4de3158069f2cdf4b4e537ea1c85050b020c6f93a551d58d1"
+  },
+  "nodeGroups": [],
+  "id": "xSmwO85uOw4PYzji",
+  "tags": []
+}

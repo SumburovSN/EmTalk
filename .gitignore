@@ -1,0 +1,16 @@
+# Secrets and local configuration
+.env
+.env.*
+!.env.example
+*.pem
+*.key
+
+# n8n local data and credentials
+.n8n/
+credentials.json
+
+# Logs and temporary files
+*.log
+*.tmp
+.DS_Store
+
