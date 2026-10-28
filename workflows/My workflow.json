@@ -6,8 +6,8 @@
       "type": "n8n-nodes-base.manualTrigger",
       "typeVersion": 1,
       "position": [
-        -1056,
-        -288
+        -1280,
+        -400
       ],
       "id": "df3a3b4a-a335-48f2-80b3-8bd9d3becf1c",
       "name": "When clicking ‘Execute workflow’"
@@ -41,8 +41,8 @@
       "type": "n8n-nodes-base.set",
       "typeVersion": 3.5,
       "position": [
-        -848,
-        -288
+        -1072,
+        -400
       ],
       "id": "0e12d0e4-a203-4a78-ba62-32cbac0c0681",
       "name": "Edit Fields"
@@ -65,8 +65,8 @@
       "type": "n8n-nodes-base.set",
       "typeVersion": 3.5,
       "position": [
-        -624,
-        -288
+        -848,
+        -400
       ],
       "id": "9c677e7e-529b-48c1-8f4a-5fe9190a99c7",
       "name": "Edit Fields1"
@@ -89,8 +89,8 @@
       "type": "n8n-nodes-base.set",
       "typeVersion": 3.5,
       "position": [
-        -400,
-        -288
+        -624,
+        -400
       ],
       "id": "4cff2fad-7f57-42dd-bc6c-eec2e7a69c02",
       "name": "User Input"
@@ -101,14 +101,14 @@
         "url": "http://host.docker.internal:11434/api/chat",
         "sendBody": true,
         "specifyBody": "json",
-        "jsonBody": "={{\n  {\n    model: \"qwen2.5:3b\",\n    stream: false,\n    messages: [\n      {\n        role: \"system\",\n        content: \"Ты — EmTalk, доброжелательный помощник по рабочим затруднениям. Отвечай по-русски, кратко и естественно. Если человек не знает, с чего начать работу, помоги выбрать один конкретный первый шаг. Не перегружай советами.\"\n      },\n      {\n        role: \"user\",\n        content: $json.body.message\n      }\n    ]\n  }\n}}",
+        "jsonBody": "={{ JSON.stringify({\n  model: \"qwen2.5:3b\",\n  messages: $json.messages,\n  stream: false\n}) }}",
         "options": {}
       },
       "type": "n8n-nodes-base.httpRequest",
       "typeVersion": 4.5,
       "position": [
-        -176,
-        -288
+        -336,
+        -160
       ],
       "id": "0cc0cf12-3eab-4fdf-871b-839d80ce8e53",
       "name": "HTTP Request"
@@ -131,8 +131,8 @@
       "type": "n8n-nodes-base.set",
       "typeVersion": 3.5,
       "position": [
-        48,
-        -288
+        -176,
+        -160
       ],
       "id": "fb19071c-9662-4d29-ad0e-3ac7c5caa081",
       "name": "Edit Fields2"
@@ -147,8 +147,8 @@
       "type": "n8n-nodes-base.webhook",
       "typeVersion": 2.2,
       "position": [
-        -16,
-        -16
+        -1280,
+        -176
       ],
       "id": "96b38871-5f45-41b3-bcf3-781b123e0f75",
       "name": "Webhook",
@@ -163,11 +163,286 @@
       "type": "n8n-nodes-base.respondToWebhook",
       "typeVersion": 1.5,
       "position": [
-        240,
-        -288
+        144,
+        -160
       ],
       "id": "f14e6da9-01bf-4fb3-8536-3c0be869da1e",
       "name": "Respond to Webhook"
+    },
+    {
+      "parameters": {
+        "resource": "table",
+        "operation": "create",
+        "tableName": "chat_history",
+        "columns": {
+          "column": [
+            {
+              "name": "sessionId"
+            },
+            {
+              "name": "role"
+            },
+            {
+              "name": "content"
+            },
+            {
+              "name": "created_at"
+            }
+          ]
+        },
+        "options": {}
+      },
+      "type": "n8n-nodes-base.dataTable",
+      "typeVersion": 1.1,
+      "position": [
+        -384,
+        -368
+      ],
+      "id": "f38d9bcb-c29c-4e47-8ce5-01c46462953a",
+      "name": "Create a data table"
+    },
+    {
+      "parameters": {
+        "operation": "get",
+        "dataTableId": {
+          "__rl": true,
+          "value": "chat_history",
+          "mode": "name"
+        },
+        "matchType": "allConditions",
+        "filters": {
+          "conditions": [
+            {
+              "keyName": "sessionId",
+              "keyValue": "={{ $json.sessionId }}"
+            }
+          ]
+        },
+        "returnAll": true
+      },
+      "type": "n8n-nodes-base.dataTable",
+      "typeVersion": 1.1,
+      "position": [
+        -1104,
+        0
+      ],
+      "id": "fb884d17-0bb9-46f5-a61a-d97329e841c5",
+      "name": "Get row(s)",
+      "alwaysOutputData": true
+    },
+    {
+      "parameters": {
+        "dataTableId": {
+          "__rl": true,
+          "value": "rzArkj04M1XE3Px8",
+          "mode": "list",
+          "cachedResultName": "chat_history",
+          "cachedResultUrl": "/projects/TjK1I0jSB40SFrT0/datatables/rzArkj04M1XE3Px8"
+        },
+        "columns": {
+          "mappingMode": "defineBelow",
+          "value": {},
+          "matchingColumns": [],
+          "schema": [
+            {
+              "id": "sessionId",
+              "displayName": "sessionId",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "string",
+              "readOnly": false,
+              "removed": false
+            },
+            {
+              "id": "role",
+              "displayName": "role",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "string",
+              "readOnly": false,
+              "removed": false
+            },
+            {
+              "id": "content",
+              "displayName": "content",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "string",
+              "readOnly": false,
+              "removed": false
+            },
+            {
+              "id": "created_at",
+              "displayName": "created_at",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "string",
+              "readOnly": false,
+              "removed": false
+            }
+          ],
+          "attemptToConvertTypes": false,
+          "convertFieldsToString": false
+        },
+        "options": {}
+      },
+      "type": "n8n-nodes-base.dataTable",
+      "typeVersion": 1.1,
+      "position": [
+        -128,
+        -368
+      ],
+      "id": "20554c77-8127-4435-b07a-cf5fbda4489d",
+      "name": "Insert row"
+    },
+    {
+      "parameters": {
+        "assignments": {
+          "assignments": [
+            {
+              "id": "ad5d5585-c5ea-46d7-9941-bc0a5b36a921",
+              "name": "sessionId",
+              "value": "={{ $json.body.sessionId }}",
+              "type": "string"
+            },
+            {
+              "id": "0c34701d-80f2-44e8-884d-8edd800ad399",
+              "name": "message",
+              "value": "={{ $json.body.message }}",
+              "type": "string"
+            }
+          ]
+        },
+        "includeOtherFields": true,
+        "options": {}
+      },
+      "type": "n8n-nodes-base.set",
+      "typeVersion": 3.5,
+      "position": [
+        -1120,
+        -176
+      ],
+      "id": "c0f74e34-ada2-4ef3-a959-2570b1c84aba",
+      "name": "Prepare Input"
+    },
+    {
+      "parameters": {
+        "mode": "combine",
+        "combineBy": "combineAll",
+        "options": {}
+      },
+      "type": "n8n-nodes-base.merge",
+      "typeVersion": 3.2,
+      "position": [
+        -896,
+        -160
+      ],
+      "id": "ed653f7c-5e4f-4255-8f0a-69a4ae145ee8",
+      "name": "Merge"
+    },
+    {
+      "parameters": {
+        "jsCode": "const prepared = $('Prepare Input').first().json;\nconst items = $input.all();\n\nconst history = items\n  .map(item => item.json)\n  .filter(row => row.role && row.content)\n  .sort((a, b) =>\n    String(a.created_at || a.createdAt || '')\n      .localeCompare(String(b.created_at || b.createdAt || ''))\n  )\n  .map(row => ({\n    role: row.role,\n    content: row.content,\n  }));\n\nreturn [{\n  json: {\n    sessionId: prepared.sessionId,\n    message: prepared.message,\n    history,\n  },\n}];\n"
+      },
+      "type": "n8n-nodes-base.code",
+      "typeVersion": 2,
+      "position": [
+        -720,
+        -160
+      ],
+      "id": "ed7a279a-250e-499b-bf01-52baab880cef",
+      "name": "Build History"
+    },
+    {
+      "parameters": {
+        "jsCode": "const data = $input.first().json;\n\nconst systemPrompt = `You are EmTalk, a supportive AI assistant helping people handle everyday work-related difficulties.\n\nYour purpose is to help the user understand what they need now and choose a realistic next step, not simply provide generic advice.\n\nCORE RULES:\n1. Be calm, respectful, empathetic, practical, and concise.\n2. LANGUAGE RULE — HIGHEST PRIORITY: Always reply in the language used in the user's latest message. If the user writes in Russian, respond entirely in Russian. If the user writes in English, respond entirely in English. Never switch languages merely because these instructions are written in English. This rule applies to every sentence, including greetings, questions, examples, and follow-up suggestions.\n3. Never invent symptoms, emotions, circumstances, causes, or facts that the user has not mentioned.\n4. Do not assume that tiredness means laziness or lack of motivation. Do not assume that mental overload means dizziness or another physical symptom.\n5. If important information is missing, ask one short, relevant clarifying question before recommending an action. Do not ask questions merely to prolong the conversation.\n6. Prefer one small, achievable next step over a long list of advice.\n7. Explain briefly why the suggested step may help, without promising results.\n8. Offer two or three alternatives only when a real choice would help. Explain their main trade-offs and let the user decide.\n9. Respond to what the user actually says. Avoid generic motivational phrases and repetitive questions such as 'What do you think?' when a more specific question is possible.\n10. Adapt to feedback. If the proposed action does not help, acknowledge this and explore another approach.\n11. Never diagnose medical or mental health conditions or present yourself as a therapist. For immediate danger or serious crisis, prioritize safety and appropriate human support.\n\nSCENARIO GUIDANCE:\n\nTIREDNESS OR WANTING MORE SLEEP:\nDo not immediately recommend exercise or meditation. First distinguish, when necessary, between genuine sleepiness, insufficient rest, and difficulty starting work. If the user is exhausted, support an appropriate rest break. If the user feels rested but struggles to start, suggest a very small first work action.\n\nNOT KNOWING WHERE TO START:\nHelp clarify the desired result, identify the main uncertainty, and select one small first action. If the goal is unclear, ask what the user needs to accomplish. Avoid inventing deadlines, priorities, or unrelated tasks.\n\nMENTAL OVERLOAD:\nAcknowledge the reported overload without adding symptoms. Suggest a short break or a simple relaxation exercise if appropriate. Then help the user decide whether to resume work, choose an easier task, or take more rest.\n\nPREPARING FOR A MEETING OR CONVERSATION:\nHelp clarify the purpose, participants, the user's role, the desired outcome, and the key points to communicate. Start with the most important missing detail. Avoid recommending presentations or reports unless the situation calls for them.\n\nDIALOGUE APPROACH:\nFirst understand the situation. Then identify what would be most useful now: recovery, clarification, or action. Recommend a suitable next step, explain why, and let the user retain control of the decision. Check the result in a later turn when appropriate.\n\nRESPONSE STYLE:\nUse natural, supportive language. Be specific to the user's message. Usually provide two to four short sentences. End with one concrete next step or one relevant question. Do not force a question into every response if a direct action is more useful.`;\n\nconst messages = [\n  { role: 'system', content: systemPrompt },\n  ...data.history,\n  { role: 'user', content: data.message },\n];\n\nreturn [{\n  json: {\n    sessionId: data.sessionId,\n    message: data.message,\n    messages,\n  },\n}];\n"
+      },
+      "type": "n8n-nodes-base.code",
+      "typeVersion": 2,
+      "position": [
+        -528,
+        -160
+      ],
+      "id": "7ae58560-4f07-4af0-9e35-aa3689b6ed9c",
+      "name": "Build Messages"
+    },
+    {
+      "parameters": {
+        "dataTableId": {
+          "__rl": true,
+          "value": "rzArkj04M1XE3Px8",
+          "mode": "list",
+          "cachedResultName": "chat_history",
+          "cachedResultUrl": "/projects/TjK1I0jSB40SFrT0/datatables/rzArkj04M1XE3Px8"
+        },
+        "columns": {
+          "mappingMode": "defineBelow",
+          "value": {
+            "sessionId": "={{ $json.sessionId }}",
+            "role": "user",
+            "content": "={{ $json.message }}",
+            "created_at": "={{ $now.toISO() }}"
+          },
+          "matchingColumns": [],
+          "schema": [
+            {
+              "id": "sessionId",
+              "displayName": "sessionId",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "string",
+              "readOnly": false,
+              "removed": false
+            },
+            {
+              "id": "role",
+              "displayName": "role",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "string",
+              "readOnly": false,
+              "removed": false
+            },
+            {
+              "id": "content",
+              "displayName": "content",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "string",
+              "readOnly": false,
+              "removed": false
+            },
+            {
+              "id": "created_at",
+              "displayName": "created_at",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "string",
+              "readOnly": false,
+              "removed": false
+            }
+          ],
+          "attemptToConvertTypes": false,
+          "convertFieldsToString": false
+        },
+        "options": {}
+      },
+      "type": "n8n-nodes-base.dataTable",
+      "typeVersion": 1.1,
+      "position": [
+        -208,
+        16
+      ],
+      "id": "c2e3bec1-b917-4f7f-8b1e-89525cca14cf",
+      "name": "Insert row1"
     }
   ],
   "pinData": {},
@@ -231,7 +506,7 @@
       "main": [
         [
           {
-            "node": "HTTP Request",
+            "node": "Prepare Input",
             "type": "main",
             "index": 0
           }
@@ -248,6 +523,87 @@
           }
         ]
       ]
+    },
+    "Get row(s)": {
+      "main": [
+        [
+          {
+            "node": "Merge",
+            "type": "main",
+            "index": 1
+          }
+        ]
+      ]
+    },
+    "Prepare Input": {
+      "main": [
+        [
+          {
+            "node": "Get row(s)",
+            "type": "main",
+            "index": 0
+          },
+          {
+            "node": "Merge",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Merge": {
+      "main": [
+        [
+          {
+            "node": "Build History",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Build History": {
+      "main": [
+        [
+          {
+            "node": "Build Messages",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Build Messages": {
+      "main": [
+        [
+          {
+            "node": "HTTP Request",
+            "type": "main",
+            "index": 0
+          },
+          {
+            "node": "Insert row1",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Respond to Webhook": {
+      "main": [
+        []
+      ]
+    },
+    "Insert row1": {
+      "main": [
+        [
+          {
+            "node": "Respond to Webhook",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
     }
   },
   "active": false,
@@ -255,7 +611,7 @@
     "executionOrder": "v1",
     "binaryMode": "separate"
   },
-  "versionId": "c0235753-3e8b-40cb-9fb6-70a5afddb618",
+  "versionId": "01f9c42c-bc62-49db-9b5b-3cebd310a7e9",
   "meta": {
     "instanceId": "a256e5983c2258d4de3158069f2cdf4b4e537ea1c85050b020c6f93a551d58d1"
   },
